@@ -151,6 +151,8 @@ for(N in 1:NROW(MitesAU.20)){
   
 }
 
+par(mfrow=c(1,1))
+
 DMMod.2 <- glm(DeltaPMI ~ Treatment, 
                family = 'gaussian',
                data = MitesAU.20)
@@ -158,5 +160,100 @@ DMMod.2 <- glm(DeltaPMI ~ Treatment,
 anova(DMMod.2, test = 'F')
 
 boxplot(MitesAU.20$DeltaPMI ~ MitesAU.20$Treatment)  
+
+par(mfrow=c(1,3))
+
+
+DBrMod.2 <- glm(DeltaBrood ~ Treatment, 
+                family = 'gaussian',
+                data = MitesAU.20)
+
+anova(DBrMod.2, test = 'F')
+
+boxplot(MitesAU.20$DeltaBrood ~ MitesAU.20$Treatment)  
+
+
+DBeMod.2 <- glm(DeltaBees ~ Treatment, 
+                family = 'gaussian',
+                data = MitesAU.20)
+
+anova(DBeMod.2, test = 'F')
+
+boxplot(MitesAU.20$DeltaBees ~ MitesAU.20$Treatment)  
+
+
+DHoMod.2 <- glm(DeltaFood ~ Treatment, 
+                family = 'gaussian',
+                data = MitesAU.20)
+
+anova(DHoMod.2, test = 'F')
+
+boxplot(MitesAU.20$DeltaFood ~ MitesAU.20$Treatment)  
+
+
+## Auburn '19 Data next
+
+FullData.AU.19 <- read.csv('Auburn19.csv',header=T, stringsAsFactors = F)
+
+MitesAU.19 <- data.frame(Colony = 
+                           (unique(FullData.AU.19$Colony))[-(match(FullData.AU.19$Colony[which(FullData.AU.19$Survived == 0)] , unique(FullData.AU.19$Colony)))])
+
+MitesAU.19$Treatment <- NA
+MitesAU.19$DeltaPMI <- NA
+MitesAU.19$DeltaBees <- NA
+MitesAU.19$DeltaBrood <- NA
+
+
+for(N in 1:NROW(MitesAU.19)){
+  
+  MitesAU.19$Treatment[N] <- unique(FullData.AU.19$Treatment[which(FullData.AU.19$Colony == MitesAU.19$Colony[N])])
+  
+  MitesAU.19$DeltaPMI[N] <- (FullData.AU.19$Mites[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == max(FullData.AU.19$Period))]
+                             -
+                               FullData.AU.19$Mites[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == min(FullData.AU.19$Period))])
+  
+  MitesAU.19$DeltaBees[N] <- (FullData.AU.19$AdultWorkers[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == max(FullData.AU.19$Period))]
+                              -
+                                FullData.AU.19$AdultWorkers[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == min(FullData.AU.19$Period))])
+  
+  MitesAU.19$DeltaBrood[N] <- (FullData.AU.19$BroodCells[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == max(FullData.AU.19$Period))]
+                               -
+                                 FullData.AU.19$BroodCells[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == min(FullData.AU.19$Period))])
+  
+}
+
+par(mfrow=c(1,1))
+
+DMMod.2 <- glm(DeltaPMI ~ Treatment, 
+               family = 'gaussian',
+               data = MitesAU.19)
+
+anova(DMMod.2, test = 'F')
+
+boxplot(MitesAU.19$DeltaPMI ~ MitesAU.19$Treatment)  
+
+par(mfrow=c(1,3))
+
+
+DBrMod.2 <- glm(DeltaBrood ~ Treatment, 
+                family = 'gaussian',
+                data = MitesAU.19)
+
+anova(DBrMod.2, test = 'F')
+
+boxplot(MitesAU.19$DeltaBrood ~ MitesAU.19$Treatment)  
+
+
+DBeMod.2 <- glm(DeltaBees ~ Treatment, 
+                family = 'gaussian',
+                data = MitesAU.19)
+
+anova(DBeMod.2, test = 'F')
+
+boxplot(MitesAU.19$DeltaBees ~ MitesAU.19$Treatment)  
+
+# GA '19
+
+
 
 
