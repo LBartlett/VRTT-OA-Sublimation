@@ -135,7 +135,7 @@ for(N in 1:NROW(MitesAU.20)){
   
   MitesAU.20$DeltaPMI[N] <- (FullData.AU.20$Mites[which(FullData.AU.20$Colony == MitesAU.20$Colony[N] & FullData.AU.20$Period == max(FullData.AU.20$Period))]
                              -
-                            FullData.AU.20$Mites[which(FullData.AU.20$Colony == MitesAU.20$Colony[N] & FullData.AU.20$Period == min(FullData.AU.20$Period))])
+                               FullData.AU.20$Mites[which(FullData.AU.20$Colony == MitesAU.20$Colony[N] & FullData.AU.20$Period == min(FullData.AU.20$Period))])
   
   MitesAU.20$DeltaBees[N] <- (FullData.AU.20$AdultWorkers[which(FullData.AU.20$Colony == MitesAU.20$Colony[N] & FullData.AU.20$Period == max(FullData.AU.20$Period))]
                               -
@@ -253,6 +253,141 @@ anova(DBeMod.2, test = 'F')
 boxplot(MitesAU.19$DeltaBees ~ MitesAU.19$Treatment)  
 
 # GA '19
+
+MitesGA.19 <- read.csv('OAUGA2019.csv',header=T, stringsAsFactors = F)
+
+par(mfrow=c(1,1))
+
+DMMod.2 <- glm(DeltaPMI ~ Treatment, 
+               family = 'gaussian',
+               data = MitesGA.19)
+
+anova(DMMod.2, test = 'F')
+
+boxplot(MitesGA.19$DeltaPMI ~ MitesGA.19$Treatment)
+
+##########################################
+
+##### OK TIME FOR COMBINED ANALYSIS ######
+
+##########################################
+
+# Add location and year to each data set ahead of time as that's easiest, add 'yards' to those with only one yard for future full analysis
+
+MitesGA.19$Site <- 'GA'
+MitesGA.19$Year <- '2019'
+MitesGA.19$Yard <- 'Pond'
+
+MitesAU.19$Site <- 'AL'
+MitesAU.19$Year <- '2019'
+MitesAU.19$Yard <- 'Auburn'
+
+MitesGA.20$Site <- 'GA'
+MitesGA.20$Year <- '2020'
+
+MitesAU.20$Site <- 'AL'
+MitesAU.20$Year <- '2020'
+MitesAU.20$Yard <- 'Auburn'
+
+MitesAll <- na.omit(rbind(
+  MitesAU.19[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')],
+  MitesAU.20[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')],
+  MitesGA.19[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')],
+  MitesGA.20[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')]
+))
+
+
+
+## Main plot
+
+# Quick transparency function for plotting
+Transpa <- function(color, percent) {
+  
+  rgb.val <- col2rgb(color)
+  
+  t.col <- rgb(rgb.val[1], rgb.val[2], rgb.val[3],
+               max = 255,
+               alpha = (100-percent)*255/100)
+  
+  return(t.col)
+  
+}
+
+#Colours
+ColRef <- data.frame(Treatment = levels(as.factor(MitesAll$Treatment)), Col =  c('purple2','orange3'))
+
+par(mar=c(5,5,2,2))
+
+boxplot(MitesAll$DeltaPMI ~ MitesAll$Treatment*MitesAll$Year*MitesAll$Site, 
+        main = NA, ylab = expression(paste(Delta, ' Percent Mite Intensity',sep='')), xlab = 'Treatment', 
+        border = 'transparent', 
+        cex.axis = 1.3, cex.lab = 1.5, outline = TRUE, lwd = 1.2,
+        boxlty = 1, whisklty = 0, staplelty = 1, boxwex = 0.00, 
+        col = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 100))
+
+abline(h =0 , lty = 3)
+
+stripchart(MitesAll$DeltaPMI ~ MitesAll$Treatment*MitesAll$Year*MitesAll$Site,
+           col = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 40),
+           vertical = T, add = T, pch = 4, cex = 0.65, 
+           method = 'jitter', lwd = 2)
+
+library(emmeans)
+
+PlotMod <- glm(MitesAll$DeltaPMI ~ MitesAll$Treatment*MitesAll$Year*MitesAll$Site,
+               family = 'gaussian')
+anova(PlotMod, test = 'F')
+
+PlotCIs <- as.data.frame(emmeans(PlotMod, specs =c('Treatment','Year','Site')))
+
+for(L in 1:NROW(PlotCIs)){
+  
+  segments(x0 = L, x1 = L, y0 = PlotCIs$asymp.LCL[L], y1 = PlotCIs$asymp.UCL[L],
+           col = ColRef$Col[which(ColRef$Treatment == PlotCIs$Treatment[L])],
+           lwd = 3)
+  
+}
+
+##### Technical Full Analysis
+
+
+hist(MitesAll$DeltaPMI)
+
+
+# Mixed model
+
+# see https://m-clark.github.io/mixed-models-with-R/extensions.html as a good example of how nested + crossed effects work
+
+library(afex)
+
+FullMiteMod <- mixed(DeltaPMI ~ Treatment + (1|Year) + (1|Site) + (1|Site:Yard),
+                     data = MitesAll)
+
+nice(FullMiteMod)
+
+MirrorMod <- lmer(DeltaPMI ~ Treatment + (1|Year) + (1|Site) + (1|Site:Yard),
+                  data = MitesAll)
+
+summary(MirrorMod)
+
+hist(resid(MirrorMod))
+qqnorm(resid(MirrorMod))
+qqline(resid(MirrorMod), col = "blue1", lwd = 2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
