@@ -375,9 +375,87 @@ qqnorm(resid(MirrorMod))
 qqline(resid(MirrorMod), col = "blue1", lwd = 2)
 
 
+## Replot main paper boxplots in appropriate colours and repeat analysis more thoroughly
 
 
+DBrMod.Full <- mixed(DeltaBrood ~ Treatment + (1|Yard),
+                     data = na.omit(MitesGA.20))
 
+nice(DBrMod.Full)
+
+DBrMod.Mirror <- lmer(DeltaBrood ~ Treatment + (1|Yard),
+                     data = na.omit(MitesGA.20))
+
+summary(DBrMod.Mirror)
+
+hist(resid(DBrMod.Mirror))
+qqnorm(resid(DBrMod.Mirror))
+qqline(resid(DBrMod.Mirror), col = "blue1", lwd = 2)
+
+DBeMod.Full <- mixed(DeltaBees ~ Treatment + (1|Yard),
+                     data = na.omit(MitesGA.20))
+
+nice(DBeMod.Full)
+
+DBeMod.Mirror <- lmer(DeltaBees ~ Treatment + (1|Yard),
+                      data = na.omit(MitesGA.20))
+
+summary(DBeMod.Mirror)
+
+hist(resid(DBeMod.Mirror))
+qqnorm(resid(DBeMod.Mirror))
+qqline(resid(DBeMod.Mirror), col = "blue1", lwd = 2)
+
+DFoMod.Full <- mixed(DeltaFood ~ Treatment + (1|Yard),
+                     data = na.omit(MitesGA.20))
+
+nice(DFoMod.Full)
+
+DFoMod.Mirror <- lmer(DeltFood ~ Treatment + (1|Yard),
+                      data = na.omit(MitesGA.20))
+
+summary(DFoMod.Mirror)
+
+hist(resid(DFoMod.Mirror))
+qqnorm(resid(DFoMod.Mirror))
+qqline(resid(DFoMod.Mirror), col = "blue1", lwd = 2)
+
+par(mfrow =c (1,3))
+
+par(mar=c(5,5,2,1))
+
+boxplot(MitesGA.20$DeltaBrood ~ MitesGA.20$Treatment,
+        main = 'Brood', ylab = expression(paste(Delta, ' Brood Coverage (Frames)',sep='')), xlab = 'Treatment', 
+        border = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 50), 
+        cex.axis = 1.3, cex.lab = 1.5, outline = T, lwd = 1.2, outcol = 'white',
+        boxlty = 1, whisklty = 1, staplelty = 1, boxwex = 0.7, 
+        col = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 50))
+stripchart(MitesGA.20$DeltaBrood ~ MitesGA.20$Treatment,
+           col = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 40),
+           vertical = T, add = T, pch = 16, cex = 1.2, 
+           method = 'jitter', lwd = 2)
+
+boxplot(MitesGA.20$DeltaBees ~ MitesGA.20$Treatment,
+        main = 'Adult Bees', ylab = expression(paste(Delta, ' Bee Population (Frames)',sep='')), xlab = 'Treatment', 
+        border = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 50), 
+        cex.axis = 1.3, cex.lab = 1.5, outline = T, lwd = 1.2, outcol = 'white',
+        boxlty = 1, whisklty = 1, staplelty = 1, boxwex = 0.7, 
+        col = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 50))
+stripchart(MitesGA.20$DeltaBees ~ MitesGA.20$Treatment,
+           col = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 40),
+           vertical = T, add = T, pch = 16, cex = 1.2, 
+           method = 'jitter', lwd = 2)
+
+boxplot(MitesGA.20$DeltaFood ~ MitesGA.20$Treatment,
+        main = 'Food Stores', ylab = expression(paste(Delta, ' Honey Area (Frames)',sep='')), xlab = 'Treatment', 
+        border = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 50), 
+        cex.axis = 1.3, cex.lab = 1.5, outline = T, lwd = 1.2, outcol = 'white',
+        boxlty = 1, whisklty = 1, staplelty = 1, boxwex = 0.7, 
+        col = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 50))
+stripchart(MitesGA.20$DeltaFood ~ MitesGA.20$Treatment,
+           col = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 40),
+           vertical = T, add = T, pch = 16, cex = 1.2, 
+           method = 'jitter', lwd = 2)
 
 
 
