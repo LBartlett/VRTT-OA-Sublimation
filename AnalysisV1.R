@@ -4,29 +4,37 @@
 # Oxalic Acid repeated sublimation study
 
 
+
 #### Begin Analysis Script
 
-# First things first lets just see if shit worked UGA 2020
+# Analysis follows a structure whereby we analyse each site/year in isolation 
+# and then undertake the 'full' technically correct composite analysis.
 
-# Load in the data sets from the UGA 2020 experiments (2019 and Auburn experiments will come later)
+# We will start with the largest, arguably most important experment (UGA 2020)
+# this dataset, uniquely, has 3 apiaries 
+# (the remainders, UGA 2019, and Auburn 2019 + 2020, have one apiary each)
 
+# Load in the data tables from the UGA 2020 experiments (2019 and Auburn experiments will come later)
 #Read in table of mite data at start of experiment (August)
 MitesUGA.Aug2020 <- read.csv(file = 'MiteWashUGAAugust2020.csv',header= T, stringsAsFactors = F)
-
 #Read in table of mite data at end of experiment (Sept)
 MitesUGA.Sep2020 <- read.csv(file = 'MiteWashUGASeptember2020.csv',header=T, stringsAsFactors = F)
-
 # Read in colony reference table
 UGAColonies2020 <- read.csv(file = 'UGAColonyInfo2020.csv',header=T, stringsAsFactors = F)
 
-
 # Simplest analysis: change in PMI based on treatment vs control
+# PMI = 'percent mite intensity' or 'mites per 100 bees'
 
 # Select colonies which survived the experiment only for analysis
+# (code clones the main colony reference data set then overwrites itself to only include surviver colonies)
 MitesGA.20 <- UGAColonies2020
 MitesGA.20 <- MitesGA.20[which(MitesGA.20$Survived == 1),]
+
+# Add the variable of interest: change in mites per 100 bees between start and end of experiment
+# 'Delta-PMI'
 MitesGA.20$DeltaPMI <- NA
 
+# Populate the DeltaPMI column using a for loop to calcuilate the metric per colony
 for(H in 1:NROW(MitesGA.20)){
   
   MitesGA.20$DeltaPMI[H] <- (MitesUGA.Sep2020$Percent[which(MitesUGA.Sep2020$Colony == MitesUGA.Sep2020$Colony[H])]
@@ -36,22 +44,29 @@ for(H in 1:NROW(MitesGA.20)){
   
 }
 
+# Look at the distribution of this data for good sense and closeness to normality
+# (mind that it is models resilduals that will matter more)
 shapiro.test(MitesGA.20$DeltaPMI)
-
 hist(MitesGA.20$DeltaPMI)
 
+# Analysis here is a Type 1 multivariate anova via a generalised linear model (Gaussian)
 DMMod.1 <- glm(DeltaPMI ~ Yard + Treatment, 
                family = 'gaussian',
                data = MitesGA.20)
-
 anova(DMMod.1, test = 'F')
+# We see no significant effect of either yard or treatment
 
+# Look at the corresponding box plot, grouped by treatment (ignore apiaries for plotting)
 boxplot(MitesGA.20$DeltaPMI ~ MitesGA.20$Treatment)  
 
-## colony health metrics
+## Colony health metrics
+# Exactly the same framework as above, |
+# read in data tables
+# calculate delta values (changes) from start to end
+# and then analyse based on treatment assignment
+# first we standardise data based on frame area to account for shallow vs deep frames
 
 HealthUGA.Aug20 <- read.csv('UGAColonyAssessments2020August.csv',header=T, stringsAsFactors = F)
-
 HealthUGA.Sep20 <- read.csv('UGAColonyAssessments2020September.csv',header=T, stringsAsFactors = F)
 
 HealthUGA.Aug20$Multiplier <- HealthUGA.Aug20$FrameType == 'Deep'
@@ -100,7 +115,6 @@ hist(MitesGA.20$DeltaBrood)
 hist(MitesGA.20$DeltaBees)
 hist(MitesGA.20$DeltaFood)
 
-
 DBrMod.1 <- glm(DeltaBrood ~ Yard + Treatment, 
                 family = 'gaussian',
                 data = MitesGA.20)
@@ -127,8 +141,15 @@ anova(DHoMod.1, test = 'F')
 
 boxplot(MitesGA.20$DeltaFood ~ MitesGA.20$Treatment)  
 
-# Auburn 2020
+# All the above should map directly to the explanations for the delta PMI.
+# We will specifically use these UGA 2020 colony health metrics in the paper
+# (mite levels don't change, removing a confound in assessing treatment safety)
 
+# Let us now repeat the above sectional analysis for the other location/year data sets
+# framework should be near-identical with some subtle differences in data manipulation
+# (different laboratory conventions on data formatting / storage)
+
+# Auburn 2020
 FullData.AU.20 <- read.csv('Auburn20.csv',header=T, stringsAsFactors = F)
 
 MitesAU.20 <- data.frame(Colony = 
@@ -139,7 +160,6 @@ MitesAU.20$DeltaPMI <- NA
 MitesAU.20$DeltaBees <- NA
 MitesAU.20$DeltaBrood <- NA
 MitesAU.20$DeltaFood <- NA
-
 
 for(N in 1:NROW(MitesAU.20)){
   
@@ -203,7 +223,7 @@ anova(DHoMod.2, test = 'F')
 boxplot(MitesAU.20$DeltaFood ~ MitesAU.20$Treatment)  
 
 
-## Auburn '19 Data next
+## Auburn '19
 
 FullData.AU.19 <- read.csv('Auburn19.csv',header=T, stringsAsFactors = F)
 
@@ -264,7 +284,7 @@ anova(DBeMod.2, test = 'F')
 
 boxplot(MitesAU.19$DeltaBees ~ MitesAU.19$Treatment)  
 
-# GA '19
+## GA '19
 
 MitesGA.19 <- read.csv('OAUGA2019.csv',header=T, stringsAsFactors = F)
 
@@ -278,13 +298,17 @@ anova(DMMod.2, test = 'F')
 
 boxplot(MitesGA.19$DeltaPMI ~ MitesGA.19$Treatment)
 
+# Repeated sectional analysis have been completed, some differences based on trials
+# but some consistent trends - see paper write up
+
 ##########################################
 
 ##### OK TIME FOR COMBINED ANALYSIS ######
 
 ##########################################
 
-# Add location and year to each data set ahead of time as that's easiest, add 'yards' to those with only one yard for future full analysis
+# Add location and year to each data set ahead of time as that's easiest, 
+# add 'yards' to those with only one yard for future full analysis.
 
 MitesGA.19$Site <- 'GA'
 MitesGA.19$Year <- '2019'
@@ -300,6 +324,8 @@ MitesGA.20$Year <- '2020'
 MitesAU.20$Site <- 'AL'
 MitesAU.20$Year <- '2020'
 MitesAU.20$Yard <- 'Auburn'
+
+# Combine into one large data frame for analysis
 
 MitesAll <- na.omit(rbind(
   MitesAU.19[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')],
@@ -325,9 +351,10 @@ Transpa <- function(color, percent) {
   
 }
 
-#Colours
+# Set plotting colours
 ColRef <- data.frame(Treatment = levels(as.factor(MitesAll$Treatment)), Col =  c('purple2','orange3'))
 
+# Makes the plots we would like
 par(mar=c(5,5,2,2))
 
 boxplot(MitesAll$DeltaPMI ~ MitesAll$Treatment*MitesAll$Year*MitesAll$Site, 
@@ -344,6 +371,7 @@ stripchart(MitesAll$DeltaPMI ~ MitesAll$Treatment*MitesAll$Year*MitesAll$Site,
            vertical = T, add = T, pch = 4, cex = 0.65, 
            method = 'jitter', lwd = 2)
 
+# (this is not real analysis it is for plotting purposes only)
 library(emmeans)
 
 PlotMod <- glm(MitesAll$DeltaPMI ~ MitesAll$Treatment*MitesAll$Year*MitesAll$Site,
@@ -360,35 +388,36 @@ for(L in 1:NROW(PlotCIs)){
   
 }
 
-##### Technical Full Analysis
-
+##### Technical Full Analysis begins here
 
 hist(MitesAll$DeltaPMI)
 
-
 # Mixed model
-
 # see https://m-clark.github.io/mixed-models-with-R/extensions.html as a good example of how nested + crossed effects work
 
 library(afex)
+
+# Mixed model structure reflects the crossed/partially-nested field trial data when in conglomerate
 
 FullMiteMod <- mixed(DeltaPMI ~ Treatment + (1|Year) + (1|Site) + (1|Site:Yard),
                      data = MitesAll)
 
 nice(FullMiteMod)
 
+# the above 'nice()' line is the critical result of significance
+
+# we re-make the model for checking direction(s) of significant effect(s) and for inspection of residuals
+
 MirrorMod <- lmer(DeltaPMI ~ Treatment + (1|Year) + (1|Site) + (1|Site:Yard),
                   data = MitesAll)
-
 summary(MirrorMod)
 
 hist(resid(MirrorMod))
 qqnorm(resid(MirrorMod))
 qqline(resid(MirrorMod), col = "blue1", lwd = 2)
 
-
+# Back to plotting.
 ## Replot main paper boxplots in appropriate colours and repeat analysis more thoroughly
-
 
 DBrMod.Full <- mixed(DeltaBrood ~ Treatment + (1|Yard),
                      data = na.omit(MitesGA.20))
@@ -423,7 +452,7 @@ DFoMod.Full <- mixed(DeltaFood ~ Treatment + (1|Yard),
 
 nice(DFoMod.Full)
 
-DFoMod.Mirror <- lmer(DeltFood ~ Treatment + (1|Yard),
+DFoMod.Mirror <- lmer(DeltaFood ~ Treatment + (1|Yard),
                       data = na.omit(MitesGA.20))
 
 summary(DFoMod.Mirror)
