@@ -1,16 +1,28 @@
-# Analysis Script
+# Script by Lewis Bartlett
+# lewis.bartlett@uga.edu
+# Data analysis in collaboration with Jennifer Berry
+# Oxalic Acid repeated sublimation study
 
+
+#### Begin Analysis Script
 
 # First things first lets just see if shit worked UGA 2020
 
-MitesUGA.Aug2020 <- read.csv('MiteWashUGAAugust2020.csv',header=T, stringsAsFactors = F)
+# Load in the data sets from the UGA 2020 experiments (2019 and Auburn experiments will come later)
 
-MitesUGA.Sep2020 <- read.csv('MiteWashUGASeptember2020.csv',header=T, stringsAsFactors = F)
+#Read in table of mite data at start of experiment (August)
+MitesUGA.Aug2020 <- read.csv(file = 'MiteWashUGAAugust2020.csv',header= T, stringsAsFactors = F)
 
-UGAColonies2020 <- read.csv('UGAColonyInfo2020.csv',header=T, stringsAsFactors = F)
+#Read in table of mite data at end of experiment (Sept)
+MitesUGA.Sep2020 <- read.csv(file = 'MiteWashUGASeptember2020.csv',header=T, stringsAsFactors = F)
+
+# Read in colony reference table
+UGAColonies2020 <- read.csv(file = 'UGAColonyInfo2020.csv',header=T, stringsAsFactors = F)
+
 
 # Simplest analysis: change in PMI based on treatment vs control
 
+# Select colonies which survived the experiment only for analysis
 MitesGA.20 <- UGAColonies2020
 MitesGA.20 <- MitesGA.20[which(MitesGA.20$Survived == 1),]
 MitesGA.20$DeltaPMI <- NA
