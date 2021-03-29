@@ -4,7 +4,6 @@
 # Oxalic Acid repeated sublimation study
 
 
-
 #### Begin Analysis Script
 
 # Analysis follows a structure whereby we analyse each site/year in isolation 
@@ -223,66 +222,66 @@ anova(DHoMod.2, test = 'F')
 boxplot(MitesAU.20$DeltaFood ~ MitesAU.20$Treatment)  
 
 
-## Auburn '19
-
-FullData.AU.19 <- read.csv('Auburn19.csv',header=T, stringsAsFactors = F)
-
-MitesAU.19 <- data.frame(Colony = 
-                           (unique(FullData.AU.19$Colony))[-(match(FullData.AU.19$Colony[which(FullData.AU.19$Survived == 0)] , unique(FullData.AU.19$Colony)))])
-
-MitesAU.19$Treatment <- NA
-MitesAU.19$DeltaPMI <- NA
-MitesAU.19$DeltaBees <- NA
-MitesAU.19$DeltaBrood <- NA
-
-
-for(N in 1:NROW(MitesAU.19)){
-  
-  MitesAU.19$Treatment[N] <- unique(FullData.AU.19$Treatment[which(FullData.AU.19$Colony == MitesAU.19$Colony[N])])
-  
-  MitesAU.19$DeltaPMI[N] <- (FullData.AU.19$Mites[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == max(FullData.AU.19$Period))]
-                             -
-                               FullData.AU.19$Mites[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == min(FullData.AU.19$Period))])
-  
-  MitesAU.19$DeltaBees[N] <- (FullData.AU.19$AdultWorkers[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == max(FullData.AU.19$Period))]
-                              -
-                                FullData.AU.19$AdultWorkers[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == min(FullData.AU.19$Period))])
-  
-  MitesAU.19$DeltaBrood[N] <- (FullData.AU.19$BroodCells[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == max(FullData.AU.19$Period))]
-                               -
-                                 FullData.AU.19$BroodCells[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == min(FullData.AU.19$Period))])
-  
-}
-
-par(mfrow=c(1,1))
-
-DMMod.2 <- glm(DeltaPMI ~ Treatment, 
-               family = 'gaussian',
-               data = MitesAU.19)
-
-anova(DMMod.2, test = 'F')
-
-boxplot(MitesAU.19$DeltaPMI ~ MitesAU.19$Treatment)  
-
-par(mfrow=c(1,3))
-
-
-DBrMod.2 <- glm(DeltaBrood ~ Treatment, 
-                family = 'gaussian',
-                data = MitesAU.19)
-
-anova(DBrMod.2, test = 'F')
-
-boxplot(MitesAU.19$DeltaBrood ~ MitesAU.19$Treatment)  
-
-
-DBeMod.2 <- glm(DeltaBees ~ Treatment, 
-                family = 'gaussian',
-                data = MitesAU.19)
-
-anova(DBeMod.2, test = 'F')
-
-boxplot(MitesAU.19$DeltaBees ~ MitesAU.19$Treatment)  
+## Auburn '19 - REMOVING THIS AS THE PULSATE TREATMENTS WERE POSSIBLY ONLY 4 NOT 7
+# 
+# FullData.AU.19 <- read.csv('Auburn19.csv',header=T, stringsAsFactors = F)
+# 
+# MitesAU.19 <- data.frame(Colony = 
+#                            (unique(FullData.AU.19$Colony))[-(match(FullData.AU.19$Colony[which(FullData.AU.19$Survived == 0)] , unique(FullData.AU.19$Colony)))])
+# 
+# MitesAU.19$Treatment <- NA
+# MitesAU.19$DeltaPMI <- NA
+# MitesAU.19$DeltaBees <- NA
+# MitesAU.19$DeltaBrood <- NA
+# 
+# 
+# for(N in 1:NROW(MitesAU.19)){
+#   
+#   MitesAU.19$Treatment[N] <- unique(FullData.AU.19$Treatment[which(FullData.AU.19$Colony == MitesAU.19$Colony[N])])
+#   
+#   MitesAU.19$DeltaPMI[N] <- (FullData.AU.19$Mites[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == max(FullData.AU.19$Period))]
+#                              -
+#                                FullData.AU.19$Mites[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == min(FullData.AU.19$Period))])
+#   
+#   MitesAU.19$DeltaBees[N] <- (FullData.AU.19$AdultWorkers[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == max(FullData.AU.19$Period))]
+#                               -
+#                                 FullData.AU.19$AdultWorkers[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == min(FullData.AU.19$Period))])
+#   
+#   MitesAU.19$DeltaBrood[N] <- (FullData.AU.19$BroodCells[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == max(FullData.AU.19$Period))]
+#                                -
+#                                  FullData.AU.19$BroodCells[which(FullData.AU.19$Colony == MitesAU.19$Colony[N] & FullData.AU.19$Period == min(FullData.AU.19$Period))])
+#   
+# }
+# 
+# par(mfrow=c(1,1))
+# 
+# DMMod.2 <- glm(DeltaPMI ~ Treatment, 
+#                family = 'gaussian',
+#                data = MitesAU.19)
+# 
+# anova(DMMod.2, test = 'F')
+# 
+# boxplot(MitesAU.19$DeltaPMI ~ MitesAU.19$Treatment)  
+# 
+# par(mfrow=c(1,3))
+# 
+# 
+# DBrMod.2 <- glm(DeltaBrood ~ Treatment, 
+#                 family = 'gaussian',
+#                 data = MitesAU.19)
+# 
+# anova(DBrMod.2, test = 'F')
+# 
+# boxplot(MitesAU.19$DeltaBrood ~ MitesAU.19$Treatment)  
+# 
+# 
+# DBeMod.2 <- glm(DeltaBees ~ Treatment, 
+#                 family = 'gaussian',
+#                 data = MitesAU.19)
+# 
+# anova(DBeMod.2, test = 'F')
+# 
+# boxplot(MitesAU.19$DeltaBees ~ MitesAU.19$Treatment)  
 
 ## GA '19
 
@@ -310,13 +309,15 @@ boxplot(MitesGA.19$DeltaPMI ~ MitesGA.19$Treatment)
 # Add location and year to each data set ahead of time as that's easiest, 
 # add 'yards' to those with only one yard for future full analysis.
 
+# Auburn 2019 commented out as treatment was only 3/6 pulsate
+
 MitesGA.19$Site <- 'GA'
 MitesGA.19$Year <- '2019'
 MitesGA.19$Yard <- 'Pond'
 
-MitesAU.19$Site <- 'AL'
-MitesAU.19$Year <- '2019'
-MitesAU.19$Yard <- 'Auburn'
+# MitesAU.19$Site <- 'AL'
+# MitesAU.19$Year <- '2019'
+# MitesAU.19$Yard <- 'Auburn'
 
 MitesGA.20$Site <- 'GA'
 MitesGA.20$Year <- '2020'
@@ -328,7 +329,7 @@ MitesAU.20$Yard <- 'Auburn'
 # Combine into one large data frame for analysis
 
 MitesAll <- na.omit(rbind(
-  MitesAU.19[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')],
+  # MitesAU.19[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')],
   MitesAU.20[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')],
   MitesGA.19[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')],
   MitesGA.20[,c('Colony','Treatment','Yard','Site','Year','DeltaPMI')]
