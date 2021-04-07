@@ -313,7 +313,7 @@ PlotCIs <- as.data.frame(emmeans(PlotMod, specs =c('Treatment','SiteYear')))
 for(L in 1:NROW(PlotCIs)){
   
   segments(x0 = L, x1 = L, y0 = PlotCIs$asymp.LCL[L], y1 = PlotCIs$asymp.UCL[L],
-           col = ColRef$Col[which(ColRef$Treatment == PlotCIs$Treatment[L])],
+           col = as.character(ColRef$Col[which(ColRef$Treatment == PlotCIs$Treatment[L])]),
            lwd = 3)
   
 }
@@ -338,7 +338,7 @@ nice(FullMiteMod)
 
 # we re-make the model for checking direction(s) of significant effect(s) and for inspection of residuals
 
-MirrorMod <- lmer(DeltaPMI ~ Treatment + (1|SiteYear) + (1|SiteYear:Yard),
+MirrorMod <- lmer(DeltaPMI ~ Treatment + (1|SiteYear) + (1|SiteYear:Yard) - 1,
                   data = MitesAll)
 summary(MirrorMod)
 
