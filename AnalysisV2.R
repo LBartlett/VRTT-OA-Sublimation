@@ -33,7 +33,7 @@ MitesGA.20 <- MitesGA.20[which(MitesGA.20$Survived == 1),]
 # 'Delta-PMI'
 MitesGA.20$DeltaPMI <- NA
 
-# Populate the DeltaPMI column using a for loop to calcuilate the metric per colony
+# Populate the DeltaPMI column using a for loop to calculate the metric per colony
 for(H in 1:NROW(MitesGA.20)){
   
   MitesGA.20$DeltaPMI[H] <- (MitesUGA.Sep2020$Percent[which(MitesUGA.Sep2020$Colony == MitesUGA.Sep2020$Colony[H])]
