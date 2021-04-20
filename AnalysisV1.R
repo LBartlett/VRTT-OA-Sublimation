@@ -4,6 +4,11 @@
 # Oxalic Acid repeated sublimation study
 
 
+##########################
+# ANALYSIS OUTDATED SEE V2
+##########################
+
+
 #### Begin Analysis Script
 
 # Analysis follows a structure whereby we analyse each site/year in isolation 
