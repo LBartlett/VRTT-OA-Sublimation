@@ -298,7 +298,7 @@ abline(h =0 , lty = 3)
 
 stripchart(MitesAll$DeltaPMI ~ MitesAll$Treatment*MitesAll$SiteYear,
            col = sapply(X = as.character(ColRef$Col), FUN = Transpa, percent = 40),
-           vertical = T, add = T, pch = 4, cex = 0.65, 
+           vertical = T, add = T, pch = 4, cex = 1.2, 
            method = 'jitter', lwd = 2)
 
 # (this is not real analysis it is for plotting purposes only)
@@ -314,7 +314,7 @@ for(L in 1:NROW(PlotCIs)){
   
   segments(x0 = L, x1 = L, y0 = PlotCIs$asymp.LCL[L], y1 = PlotCIs$asymp.UCL[L],
            col = as.character(ColRef$Col[which(ColRef$Treatment == PlotCIs$Treatment[L])]),
-           lwd = 3)
+           lwd = 5)
   
 }
 
@@ -430,7 +430,11 @@ stripchart(MitesGA.20$DeltaFood ~ MitesGA.20$Treatment,
 
 
 
+### Basic summary statistics for reference
 
+AU.Start.Varroa <- median(FullData.AU.20$Mites[which(FullData.AU.20$Period == 0)])
+GA19.Start.Varroa <- median(MitesGA.19$Mites1)
+GA20.Start.Varroa <- median(MitesUGA.Aug2020$Percent)
 
 
 
